@@ -47,8 +47,6 @@ async function run(): Promise<void> {
       }
     }
 
-    // let state = "success"
-
     const review_gatekeeper = new ReviewGatekeeper(
       Array.from(requested_users),
       Array.from(approved_users)
@@ -68,13 +66,12 @@ async function run(): Promise<void> {
       target_url: workflow_url,
       description: review_gatekeeper.satisfy()
         ? undefined
-        : review_gatekeeper.getMessages().join(' ').substring(0, 140)
+        : review_gatekeeper.getMessages()[0]
     })
 
-    if (!review_gatekeeper.satisfy()) {
-      core.setFailed(review_gatekeeper.getMessages().join(EOL))
-      return
-    }
+    // this run always return success (all status comes through the Review Gatekeeper Status, above)
+    core.info(review_gatekeeper.getMessages().join(EOL))
+
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
